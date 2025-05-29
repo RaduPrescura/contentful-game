@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contentful Game Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .game-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #c62828;
+        }
+        iframe {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .game-info {
+            margin-bottom: 15px;
+        }
+        .game-title {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .config-panel {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .config-panel input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .config-panel button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .config-panel button:hover {
+            background: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contentful Game Integration Test</h1>
+    
+    <div class="config-panel">
+        <h3>Configuration</h3>
+        <input type="text" id="spaceId" placeholder="Your Contentful Space ID">
+        <input type="text" id="accessToken" placeholder="Your Contentful Access Token">
+        <input type="text" id="contentType" placeholder="Content Type ID (default: webGame)" value="webGame">
+        <button onclick="testIntegration()">Test Integration</button>
+    </div>
+
+    <div id="results">
+        <div class="loading">Enter your Contentful credentials above and click "Test Integration"</div>
+    </div>
+
+    <script>
+        async function testIntegration() {
+            const spaceId = document.getElementById('spaceId').value;
+            const accessToken = document.getElementById('accessToken').value;
+            const contentType = document.getElementById('contentType').value || 'webGame';
+            
+            if (!spaceId || !accessToken) {
+                document.getElementById('results').innerHTML = 
+                    '<div class="error">Please enter both Space ID and Access Token</div>';
+                return;
+            }
+            
+            document.getElementById('results').innerHTML = 
+                '<div class="loading">Loading games from Contentful...</div>';
+            
+            try {
+                const response = await fetch(
+                    `https://cdn.contentful.com/spaces/${spaceId}/entries?content_type=${contentType}&access_token=${accessToken}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.items.length === 0) {
+                    document.getElementById('results').innerHTML = 
+                        '<div class="error">No games found. Make sure you have published entries with the correct content type.</div>';
+                    return;
+                }
+                
+                let html = '<h2>Found Games:</h2>';
+                
+                data.items.forEach((item, index) => {
+                    const fields = item.fields;
+                    html += `
+                        <div class="game-container">
+                            <div class="game-info">
+                                <h3 class="game-title">${fields.title || 'Untitled Game'}</h3>
+                                ${fields.description ? `<p>${fields.description}</p>` : ''}
+                                <p><strong>URL:</strong> ${fields.gameUrl || 'No URL provided'}</p>
+                            </div>
+                            ${fields.gameUrl ? `
+                                <iframe 
+                                    src="${fields.gameUrl}" 
+                                    width="${fields.width || 800}" 
+                                    height="${fields.height || 600}"
+                                    frameborder="0"
+                                    loading="lazy">
+                                </iframe>
+                            ` : '<div class="error">No game URL provided</div>'}
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('results').innerHTML = html;
+                
+            } catch (error) {
+                document.getElementById('results').innerHTML = 
+                    `<div class="error">Error loading games: ${error.message}</div>`;
+                console.error('Error:', error);
+            }
+        }
+        
+        // Allow testing with Enter key
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testIntegration();
+            }
+        });
+    </script>
+</body>
+</html>
