@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Plastic Materials - Interactive Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #ffffff;
+        }
+
+        .header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 40px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #6c757d;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .content {
+            padding: 60px 0;
+        }
+
+        .intro-section {
+            margin-bottom: 50px;
+        }
+
+        .intro-section h2 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .intro-text {
+            font-size: 1.1rem;
+            color: #495057;
+            margin-bottom: 20px;
+            max-width: 800px;
+        }
+
+        .key-points {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .key-points h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-points li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .key-points li:before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .game-section {
+            background: #f8f9fa;
+            padding: 50px 0;
+            margin: 50px 0;
+        }
+
+        .game-section h2 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .game-description {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .game-iframe {
+            width: 100%;
+            height: 700px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .material-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .material-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .material-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .material-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .material-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .material-full-name {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .material-description {
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .game-iframe {
+                height: 600px;
+            }
+            
+            .materials-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Understanding Plastic Materials</h1>
+            <p class="subtitle">Learn about different types of plastics and their properties through interactive education</p>
+        </div>
+    </header>
+
+    <main class="content">
+        <div class="container">
+            <section class="intro-section">
+                <h2>Why Learn About Plastics?</h2>
+                <p class="intro-text">
+                    Plastics are everywhere in our daily lives, from the bottles we drink from to the electronic devices we use. 
+                    Understanding different types of plastics and their properties is crucial for making informed decisions about 
+                    recycling, sustainability, and material selection in various applications.
+                </p>
+                <p class="intro-text">
+                    Each plastic type has unique characteristics that make it suitable for specific uses. By learning to identify 
+                    these materials and their properties, we can better understand their environmental impact and make more 
+                    sustainable choices.
+                </p>
+
+                <div class="key-points">
+                    <h3>Key Learning Objectives:</h3>
+                    <ul>
+                        <li>Identify common plastic types and their recycling codes</li>
+                        <li>Understand the unique properties of each plastic material</li>
+                        <li>Learn about appropriate applications for different plastics</li>
+                        <li>Develop awareness of recycling and sustainability considerations</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <section class="game-section">
+            <div class="container">
+                <h2>Interactive Memory Game</h2>
+                <p class="game-description">
+                    Test your knowledge with our interactive memory game! Match plastic materials with their key properties 
+                    to reinforce your learning. Click on cards to flip them and find matching pairs.
+                </p>
+                
+               <iframe 
+                class="game-iframe" 
+                src="https://raduprescura.github.io/contentful-game/plastic-memory.html"
+                title="Plastic Materials Memory Game"
+                frameborder="0"
+                allowfullscreen>
+            </iframe>
+            </div>
+        </section>
+
+        <div class="container">
+            <section class="materials-section">
+                <h2>Plastic Materials Reference</h2>
+                <div class="materials-grid">
+                    <div class="material-card">
+                        <div class="material-header">
+                            <span class="material-icon">🥤</span>
+                            <div>
+                                <div class="material-name">PET</div>
+                                <div class="material-full-name">Polyethylene Terephthalate</div>
+                            </div>
+                        </div>
+                        <p class="material-description">
+                            Clear, lightweight plastic commonly used for beverage bottles and food containers. 
+                            Highly recyclable and has excellent barrier properties against moisture and gases.
+                        </p>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <span class="material-icon">🛍️</span>
+                            <div>
+                                <div class="material-name">HDPE</div>
+                                <div class="material-full-name">High-Density Polyethylene</div>
+                            </div>
+                        </div>
+                        <p class="material-description">
+                            Chemical resistant and strong plastic used for shopping bags, milk jugs, and detergent bottles. 
+                            Known for its durability and resistance to impact and chemicals.
+                        </p>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <span class="material-icon">🔧</span>
+                            <div>
+                                <div class="material-name">PVC</div>
+                                <div class="material-full-name">Polyvinyl Chloride</div>
+                            </div>
+                        </div>
+                        <p class="material-description">
+                            Versatile plastic that can be rigid or flexible. Used in pipes, window frames, and medical equipment. 
+                            Can be made flexible with plasticizers for various applications.
+                        </p>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <span class="material-icon">📦</span>
+                            <div>
+                                <div class="material-name">LDPE</div>
+                                <div class="material-full-name">Low-Density Polyethylene</div>
+                            </div>
+                        </div>
+                        <p class="material-description">
+                            Flexible plastic used for films, squeezable bottles, and plastic bags. 
+                            Offers good chemical resistance and flexibility at low temperatures.
+                        </p>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <span class="material-icon">🍱</span>
+                            <div>
+                                <div class="material-name">PP</div>
+                                <div class="material-full-name">Polypropylene</div>
+                            </div>
+                        </div>
+                        <p class="material-description">
+                            Heat resistant plastic safe for microwave use. Common in food containers, bottle caps, 
+                            and automotive parts. Excellent chemical resistance and low density.
+                        </p>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <span class="material-icon">☕</span>
+                            <div>
+                                <div class="material-name">PS</div>
+                                <div class="material-full-name">Polystyrene</div>
+                            </div>
+                        </div>
+                        <p class="material-description">
+                            Can be solid and brittle or expanded into foam. Used for disposable cups, food packaging, 
+                            and insulation. Excellent insulating properties when foamed.
+                        </p>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <span class="material-icon">💧</span>
+                            <div>
+                                <div class="material-name">PC</div>
+                                <div class="material-full-name">Polycarbonate</div>
+                            </div>
+                        </div>
+                        <p class="material-description">
+                            Crystal clear and impact resistant plastic used in water bottles, eyeglass lenses, 
+                            and electronic components. Exceptional clarity and toughness.
+                        </p>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <span class="material-icon">🧴</span>
+                            <div>
+                                <div class="material-name">ABS</div>
+                                <div class="material-full-name">Acrylonitrile Butadiene Styrene</div>
+                            </div>
+                        </div>
+                        <p class="material-description">
+                            Tough and moldable plastic used in toys, electronics housings, and automotive parts. 
+                            Combines strength, flexibility, and excellent moldability.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Plastic Materials Learning. Educational content for understanding plastic properties.</p>
+            <p>Learn responsibly, recycle properly, and make informed material choices.</p>
+        </div>
+    </footer>
+</body>
+</html>
