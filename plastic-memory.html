@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plastic Materials Memory Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            display: block;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            border-radius: 15px;
+            cursor: pointer;
+            position: relative;
+            min-height: 120px;
+            perspective: 1000px;
+        }
+
+        .card:hover:not(.flipped):not(.matched) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card.matched .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card.matched {
+            cursor: default;
+            opacity: 0.8;
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            transform: rotateY(180deg);
+            flex-direction: column;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .card.matched .card-back {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .card-property {
+            font-size: 0.75rem;
+            color: #555;
+            line-height: 1.2;
+        }
+
+        .question-mark {
+            font-size: 3rem;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .modal p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 600px) {
+            .game-board {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .card {
+                min-height: 100px;
+            }
+            
+            .card-title {
+                font-size: 0.8rem;
+            }
+            
+            .card-property {
+                font-size: 0.7rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Plastic Memory</h1>
+        <p class="subtitle">Match plastic materials with their key properties</p>
+        
+        <div class="game-stats">
+            <div class="stat">
+                <span class="stat-value" id="moves">0</span>
+                <span>Moves</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="matches">0</span>
+                <span>Matches</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="timer">00:00</span>
+                <span>Time</span>
+            </div>
+        </div>
+
+        <div class="game-board" id="gameBoard"></div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="restartGame()">New Game</button>
+        </div>
+    </div>
+
+    <div class="modal" id="winModal">
+        <div class="modal-content">
+            <h2>🎉 Congratulations!</h2>
+            <p>You completed the game in <span id="finalTime"></span> with <span id="finalMoves"></span> moves!</p>
+            <button class="btn btn-primary" onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        const plasticData = [
+            {
+                icon: '🥤',
+                title: 'PET',
+                property: 'Clear, lightweight, recyclable bottles'
+            },
+            {
+                icon: '🛍️',
+                title: 'HDPE',
+                property: 'Chemical resistant, strong shopping bags'
+            },
+            {
+                icon: '🔧',
+                title: 'PVC',
+                property: 'Durable pipes, flexible when plasticized'
+            },
+            {
+                icon: '📦',
+                title: 'LDPE',
+                property: 'Flexible films, squeezable containers'
+            },
+            {
+                icon: '🍱',
+                title: 'PP',
+                property: 'Heat resistant, microwave-safe containers'
+            },
+            {
+                icon: '☕',
+                title: 'PS',
+                property: 'Insulating foam cups, brittle when solid'
+            },
+            {
+                icon: '💧',
+                title: 'PC',
+                property: 'Crystal clear, impact resistant bottles'
+            },
+            {
+                icon: '🧴',
+                title: 'ABS',
+                property: 'Tough, moldable, toys and electronics'
+            }
+        ];
+
+        let gameBoard = [];
+        let flippedCards = [];
+        let moves = 0;
+        let matches = 0;
+        let gameTime = 0;
+        let gameTimer;
+        let gameStarted = false;
+
+        function initGame() {
+            // Create pairs of cards
+            gameBoard = [];
+            plasticData.forEach((plastic, index) => {
+                // Material card
+                gameBoard.push({
+                    id: index * 2,
+                    type: 'material',
+                    icon: plastic.icon,
+                    title: plastic.title,
+                    property: plastic.property,
+                    pairId: index
+                });
+                // Property card
+                gameBoard.push({
+                    id: index * 2 + 1,
+                    type: 'property',
+                    icon: '📋',
+                    title: 'Property',
+                    property: plastic.property,
+                    pairId: index
+                });
+            });
+
+            // Shuffle the board
+            gameBoard = gameBoard.sort(() => Math.random() - 0.5);
+            
+            // Reset game state
+            flippedCards = [];
+            moves = 0;
+            matches = 0;
+            gameTime = 0;
+            gameStarted = false;
+            
+            updateStats();
+            renderBoard();
+        }
+
+        function renderBoard() {
+            const boardElement = document.getElementById('gameBoard');
+            boardElement.innerHTML = '';
+
+            gameBoard.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card';
+                cardElement.dataset.cardId = card.id;
+                cardElement.onclick = () => flipCard(card.id);
+
+                cardElement.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="question-mark">?</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-icon">${card.icon}</div>
+                            <div class="card-title">${card.title}</div>
+                            <div class="card-property">${card.property}</div>
+                        </div>
+                    </div>
+                `;
+
+                boardElement.appendChild(cardElement);
+            });
+        }
+
+        function flipCard(cardId) {
+            if (!gameStarted) {
+                startTimer();
+                gameStarted = true;
+            }
+
+            const card = gameBoard.find(c => c.id === cardId);
+            const cardElement = document.querySelector(`[data-card-id="${cardId}"]`);
+
+            // Prevent flipping if card is already flipped or matched
+            if (flippedCards.includes(cardId) || cardElement.classList.contains('matched')) {
+                return;
+            }
+
+            // Prevent flipping more than 2 cards
+            if (flippedCards.length >= 2) {
+                return;
+            }
+
+            // Flip the card
+            cardElement.classList.add('flipped');
+            flippedCards.push(cardId);
+
+            // Check for match if 2 cards are flipped
+            if (flippedCards.length === 2) {
+                moves++;
+                updateStats();
+                setTimeout(checkMatch, 800);
+            }
+        }
+
+        function checkMatch() {
+            const [card1Id, card2Id] = flippedCards;
+            const card1 = gameBoard.find(c => c.id === card1Id);
+            const card2 = gameBoard.find(c => c.id === card2Id);
+            const cardElement1 = document.querySelector(`[data-card-id="${card1Id}"]`);
+            const cardElement2 = document.querySelector(`[data-card-id="${card2Id}"]`);
+
+            if (card1.pairId === card2.pairId) {
+                // Match found
+                cardElement1.classList.add('matched');
+                cardElement2.classList.add('matched');
+                matches++;
+                
+                // Check if game is won
+                if (matches === plasticData.length) {
+                    setTimeout(showWinModal, 500);
+                    clearInterval(gameTimer);
+                }
+            } else {
+                // No match, flip cards back
+                cardElement1.classList.remove('flipped');
+                cardElement2.classList.remove('flipped');
+            }
+
+            flippedCards = [];
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('moves').textContent = moves;
+            document.getElementById('matches').textContent = matches;
+        }
+
+        function startTimer() {
+            gameTimer = setInterval(() => {
+                gameTime++;
+                const minutes = Math.floor(gameTime / 60);
+                const seconds = gameTime % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function showWinModal() {
+            const minutes = Math.floor(gameTime / 60);
+            const seconds = gameTime % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('finalTime').textContent = timeString;
+            document.getElementById('finalMoves').textContent = moves;
+            document.getElementById('winModal').style.display = 'block';
+        }
+
+        function restartGame() {
+            document.getElementById('winModal').style.display = 'none';
+            clearInterval(gameTimer);
+            initGame();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('winModal').onclick = function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        }
+
+        // Initialize game on page load
+        initGame();
+    </script>
+</body>
+</html>
